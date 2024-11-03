@@ -1,7 +1,6 @@
 import streamlit as st
 from utils import (
-    add_vintage_background,
-    add_background_music,
+    set_white_background,
     calculate_xT,
     crop_figure,
     load_and_resize_image,
@@ -17,7 +16,8 @@ from statsbombpy import sb
 
 
 def main():
-    st.set_page_config(layout="wide")   
+    st.set_page_config(layout="wide")  
+    set_white_background()
     add_vintage_background()
     st.title('Brasil 70')
     
