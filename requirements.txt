@@ -1,0 +1,7 @@
+statsbombpy
+pandas
+mplsoccer
+Pillow
+requests
+numpy
+streamlit
