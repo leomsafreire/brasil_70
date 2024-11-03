@@ -18,7 +18,6 @@ from statsbombpy import sb
 def main():
     st.set_page_config(layout="wide")  
     set_white_background()
-    add_vintage_background()
     st.title('Brasil 70')
     
 
