@@ -19,6 +19,8 @@ def main():
     st.set_page_config(layout="wide")  
     set_light_mode()
     st.title('Brasil 70')
+    st.markdown("<small style='font-size: 14px; color: black;'>by Leo M. Sa Freire</small>", unsafe_allow_html=True)
+
     
 
     players = {
