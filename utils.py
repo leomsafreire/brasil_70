@@ -65,10 +65,12 @@ def set_light_mode():
 def calculate_xA(events, player_name):
     # Filtra os eventos do jogador e encontra as assistências de chute
     player_events = events[events['player'] == player_name]
+    
+    xA_value = 0
+    if (player_events.index + 1 < len(events)).all() and (player_events.index + 2 < len(events)).all():
+        xA_value = events.loc[player_events.index + 1, 'shot_statsbomb_xg'].fillna(0).sum() + \
+                   events.loc[player_events.index + 2, 'shot_statsbomb_xg'].fillna(0).sum()
 
-    # Soma os valores de xG dos eventos subsequentes ao índice de assistências de chute
-    xA_value = events.loc[player_events.index + 1, 'shot_statsbomb_xg'].fillna(0).sum() + \
-               events.loc[player_events.index + 2, 'shot_statsbomb_xg'].fillna(0).sum()
 
     return xA_value
 
