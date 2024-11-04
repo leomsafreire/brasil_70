@@ -26,7 +26,7 @@ def set_light_mode():
 
         /* Estilo personalizado para botões com borda cinza escura e fundo cinza claro */
         .stButton>button {
-            background-color: #e6e6e6; /* Fundo cinza claro */
+            background-color: #e9e9e9; /* Fundo cinza claro */
             color: #000000; /* Texto preto */
             border: 2px solid #a9a9a9; /* Contorno cinza escuro */
             padding: 10px 20px;
