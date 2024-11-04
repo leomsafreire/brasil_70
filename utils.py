@@ -51,10 +51,16 @@ def set_light_mode():
         .css-1adrfps {
             background-color: #ffffff !important;
         }
+
+        /* Estilo para labels de st.metric */
+        .css-1cpxqw2, .css-1xarl3l { /* Estes seletores são específicos do label em st.metric */
+            color: #000000 !important; /* Texto preto */
+        }
         </style>
         """,
         unsafe_allow_html=True
     )
+
 
     
 def calculate_xT(player_events):
