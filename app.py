@@ -20,15 +20,6 @@ def main():
     set_light_mode()
     st.title('Brasil 70')
     st.markdown("<span style='font-size: 18px; color: black;'>by Leo M. Sa Freire</span>", unsafe_allow_html=True)
-    # Subtítulo em fonte menor
-    st.markdown("<span style='font-size: 24px;'>The 1970 Brazilian national team is often hailed as the greatest World Cup team of all time. With Pelé in his final form, the iconic five-midfield lineup, and the controversial coaching change right before the tournament—everything aligned for Brazil's historic third world title.</span>", unsafe_allow_html=True)
-    
-    # Texto principal em parágrafos
-    st.markdown("""
-    <p style='font-size: 24px;'>
-        This project pays tribute to the legendary players behind this achievement. The first page, styled like a sticker album, showcases each of them. By clicking on a player’s name, you can open a detailed profile with stats and highlights from their performance in the 1970 World Cup.
-    </p>
-    """, unsafe_allow_html=True)
     
 
     players = {
@@ -58,7 +49,17 @@ def main():
 
 
     if "selected_player" not in st.session_state:
+        # Subtítulo em fonte menor
+        st.markdown("<span style='font-size: 24px;'>The 1970 Brazilian national team is often hailed as the greatest World Cup team of all time. With Pelé in his final form, the iconic five-midfield lineup, and the controversial coaching change right before the tournament—everything aligned for Brazil's historic third world title.</span>", unsafe_allow_html=True)
+        
+        # Texto principal em parágrafos
+        st.markdown("""
+        <p style='font-size: 24px;'>
+            This project pays tribute to the legendary players behind this achievement. The first page, styled like a sticker album, showcases each of them. By clicking on a player’s name, you can open a detailed profile with stats and highlights from their performance in the 1970 World Cup.
+        </p>
+        """, unsafe_allow_html=True)
         st.header("Pick a player:")
+
 
 
         cols = st.columns(5)  
