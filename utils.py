@@ -52,9 +52,9 @@ def set_light_mode():
             background-color: #ffffff !important;
         }
 
-        /* Estilo para labels de st.metric */
-        .css-1cpxqw2, .css-1xarl3l { /* Estes seletores são específicos do label em st.metric */
-            color: #000000 !important; /* Texto preto */
+        div[data-testid="stMetricLabel"] {
+            color: black !important;
+    }
         }
         </style>
         """,
