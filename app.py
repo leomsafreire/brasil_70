@@ -17,7 +17,7 @@ from statsbombpy import sb
 
 def main():
     st.set_page_config(layout="wide")  
-    set_light_mode()
+    # set_light_mode()
     st.title('Brasil 70')
     st.markdown("<span style='font-size: 18px; color: black;'>by Leo M. Sa Freire</span>", unsafe_allow_html=True)
     
