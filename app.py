@@ -226,8 +226,8 @@ def main():
         competition_id = season_data['competition_id']
         season_id = season_data['season_id']
     
-       
-        player_events = get_player_events_competition(competition_id, season_id, player_name)
+        events = get_events_competition(competition_id, season_id)
+        player_events = get_player_events_competition(events, player_name)
     
         if player_events.empty:
             st.write(f"No data for {player_name}")
@@ -248,8 +248,8 @@ def main():
 
         total_xt_pass, total_xt_carries = calculate_xT(player_events)
         
-        events = get_events_competition(competition_id, season_id)
-        total_xa = calculate_xA(events,player_name)
+
+        total_xa = calculate_xA(events,player_name).round(2)
 
         st.header(f'{selected_player}')
     

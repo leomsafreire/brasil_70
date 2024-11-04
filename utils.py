@@ -201,19 +201,12 @@ def get_events_competition(competition_id, season_id):
         return all_events
     else:
         return pd.DataFrame()
-def get_player_events_competition(competition_id, season_id, player_name):
-    matches = get_matches(competition_id, season_id)
-    player_events_list = []
+def get_player_events_competition(events, player_name):
 
-    for _, match in matches.iterrows():
-        events_df = sb.events(match_id=match['match_id'], flatten_attrs=True)
-        player_events = events_df[events_df['player'] == player_name]
-        if not player_events.empty:
-            player_events_list.append(player_events)
+    player_events = events[events['player'] == player_name]
 
-    if player_events_list:
-        all_player_events = pd.concat(player_events_list)
-        return all_player_events
+    if player_events:
+        return player_events
     else:
         return pd.DataFrame()
 
