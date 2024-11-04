@@ -131,38 +131,47 @@ def main():
         stats_container = st.container()
         with stats_container:
             cols = st.columns(6)
-
+        
             with cols[0]:
-                player_image = load_and_resize_image(player_name, final_size = (300,500), aspect_ratio=3/5)  #
+                player_image = load_and_resize_image(player_name, final_size=(300, 500), aspect_ratio=3/5)
                 st.image(player_image)
-                
+            
+            # Dividindo a coluna 1 em duas subcolunas
             with cols[1]:
-                st.metric(label="Matches", value=int(n_matches))
-                st.metric(label="Goals", value=int(total_goals))
-                st.metric(label="Assists", value=int(total_assists))
-                st.metric(label="xG", value=total_xg)
-                st.metric(label="Pass xT", value=total_xt_pass.round(2))
-                st.metric(label="Carry xT", value=total_xt_carries.round(2))
+                subcols = st.columns(2)
+                with subcols[0]:
+                    st.metric(label="Matches", value=int(n_matches))
+                    st.metric(label="Goals", value=int(total_goals))
+                    st.metric(label="Assists", value=int(total_assists))
+                with subcols[1]:
+                    st.metric(label="xG", value=total_xg)
+                    st.metric(label="Pass xT", value=total_xt_pass.round(2))
+                    st.metric(label="Carry xT", value=total_xt_carries.round(2))
+            
             with cols[2]:
                 st.subheader('Ball Receipts')
                 fig_rec_actions = plot_reception_actions(player_events)
                 cropped_rec_actions = crop_figure(fig_rec_actions)
-                st.image(cropped_rec_actions,  width = 190)
+                st.image(cropped_rec_actions, width=190)
+            
             with cols[3]:
                 st.subheader('Carries')
                 fig_carries = plot_carries(player_events)
                 cropped_carries = crop_figure(fig_carries)
-                st.image(cropped_carries, width = 190)
+                st.image(cropped_carries, width=190)
+            
             with cols[4]:
                 st.subheader('Passes')
                 fig_passes = plot_passes(player_events)
                 cropped_passes = crop_figure(fig_passes)
-                st.image(cropped_passes, width = 190 )
+                st.image(cropped_passes, width=190)
+            
             with cols[5]:
                 st.subheader('Shots')
                 fig_possession_losses = plot_shots(player_events)
                 cropped_shots = crop_figure(fig_possession_losses)
-                st.image(cropped_shots,  width = 190)
+                st.image(cropped_shots, width=190)
+
     
  
        
