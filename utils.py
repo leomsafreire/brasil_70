@@ -8,33 +8,32 @@ from io import BytesIO
 import numpy as np
 import streamlit as st
 
-def set_white_background():
-    """
-    Função para definir um fundo branco puro no aplicativo.
-    """
+# CSS para manter o modo claro no app
+def set_light_mode():
     st.markdown(
         """
         <style>
+        /* Define o fundo da página e o texto em modo claro */
         .stApp {
             background-color: #ffffff; /* Fundo branco */
-            color: #333333; /* Cor do texto para bom contraste */
-            font-family: 'Arial', sans-serif;
-        }
-
-        /* Estilo para títulos */
-        h1, h2, h3, h4 {
-            color: #333333; /* Tom cinza escuro para títulos */
+            color: #000000; /* Texto preto */
         }
         
-        /* Ajustes para o espaçamento */
-        .stMarkdown, .stContainer {
-            padding: 1em 2em;
+        /* Define o fundo claro para componentes interativos */
+        .stButton>button, .stTextInput, .stSelectbox {
+            background-color: #f8f9fa;
+            color: #333333;
+        }
+
+
+        /* Remove fundo escuro nos containers */
+        .css-1adrfps {
+            background-color: #ffffff !important;
         }
         </style>
         """,
         unsafe_allow_html=True
     )
-
 
     
 def calculate_xT(player_events):

@@ -1,6 +1,6 @@
 import streamlit as st
 from utils import (
-    set_white_background,
+    set_light_mode,
     calculate_xT,
     crop_figure,
     load_and_resize_image,
@@ -17,7 +17,7 @@ from statsbombpy import sb
 
 def main():
     st.set_page_config(layout="wide")  
-    set_white_background()
+    set_light_mode()
     st.title('Brasil 70')
     
 
