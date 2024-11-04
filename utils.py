@@ -64,7 +64,7 @@ def set_light_mode():
 
 def calculate_xA(events, player):
     # Filtra as assistências de chute do jogador
-    player_shot_assists_indexes = events[(events['pass_shot_assist'] == True) & (events['player_name'] == player)].index
+    player_shot_assists_indexes = events[(events['pass_shot_assist'] == True) & (events['player'] == player)].index
     
     # Inicializa a variável para armazenar a soma de xG
     xA_value = 0
