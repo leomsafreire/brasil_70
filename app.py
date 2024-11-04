@@ -59,7 +59,7 @@ def main():
                     st.session_state.player_name = name
                     st.session_state.player_image_url = image_url
                     st.experimental_rerun()
-                player_image = load_and_resize_image(image_url)  
+                player_image = load_and_resize_image(name)  
                 st.image(player_image, use_column_width=True)
 
 
@@ -111,7 +111,7 @@ def main():
             cols = st.columns(6)
 
             with cols[0]:
-                player_image = load_and_resize_image(player_image_url, final_size = (300,500), aspect_ratio=3/5)  #
+                player_image = load_and_resize_image(player_name, final_size = (300,500), aspect_ratio=3/5)  #
                 st.image(player_image)
                 
             with cols[1]:
