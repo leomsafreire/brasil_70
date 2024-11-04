@@ -8,7 +8,6 @@ from io import BytesIO
 import numpy as np
 import streamlit as st
 
-# CSS para manter o modo claro no app
 def set_light_mode():
     st.markdown(
         """
@@ -18,28 +17,36 @@ def set_light_mode():
             background-color: #ffffff; /* Fundo branco */
             color: #000000; /* Texto preto */
         }
-        
+
         /* Define o fundo claro para componentes interativos */
-        .stButton>button, .stTextInput, .stSelectbox {
+        .stTextInput, .stSelectbox {
             background-color: #f8f9fa;
             color: #333333;
         }
-        
-        /* Estilo personalizado para bot'ões */
-'.stButton>button {
-    background-color: #e0e0e0; /* Fundo cinza claro */
-    color: #000000; /* Texto preto */
-    border: 2px solid #000000; /* Contorno preto */
-    padding: 10px 20px;
-    border-radius: 5px; /* Bordas levemente arredondadas */
-    font-size: 16px;
-    font-weight: bold;
-}''
+
+        /* Estilo personalizado para botões */
+        .stButton>button {
+            background-color: #e0e0e0; /* Fundo cinza claro */
+            color: #000000; /* Texto preto */
+            border: 2px solid #000000; /* Contorno preto */
+            padding: 10px 20px;
+            border-radius: 5px; /* Bordas levemente arredondadas */
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* Efeito de hover para os botões */
+        .stButton>button:hover {
+            background-color: #d0d0d0; /* Fundo cinza mais escuro no hover */
+            border-color: #333333;
+            color: #000000;
+        }
 
         /* Estilo para cabeçalhos */
         h1, h2, h3, h4, h5, h6 {
-            color: #000000; /* Cinza escuro para os cabeçalhos */
+            color: #000000; /* Cor preta para os cabeçalhos */
         }
+        
         /* Remove fundo escuro nos containers */
         .css-1adrfps {
             background-color: #ffffff !important;
@@ -48,7 +55,6 @@ def set_light_mode():
         """,
         unsafe_allow_html=True
     )
-
     
 def calculate_xT(player_events):
     
