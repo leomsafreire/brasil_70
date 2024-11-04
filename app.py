@@ -55,7 +55,7 @@ def main():
         # Texto principal em parágrafos
         st.markdown("""
         <p style='font-size: 24px;'>
-            This project pays tribute to the legendary players behind this achievement. The first page, styled like a sticker album, showcases each of them. By clicking on a player’s name, you can open a detailed profile with stats and highlights from their performance in the 1970 World Cup.
+            This project pays tribute to the legendary players behind this achievement. The first page, styled like a sticker album, showcases each of them. By clicking on a player’s name, you can open a data profile with their performance in the 1970 World Cup.
         </p>
         """, unsafe_allow_html=True)
         st.header("Pick a player:")
