@@ -6,6 +6,7 @@ from utils import (
     crop_figure,
     load_and_resize_image,
     get_competitions,
+    get_events_competition,
     get_player_events_competition,
     plot_passes,
     plot_carries,
