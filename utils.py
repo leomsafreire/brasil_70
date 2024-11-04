@@ -66,10 +66,10 @@ def calculate_xA(events, player_name):
     # Filtra os eventos do jogador e encontra as assistências de chute
     player_events = events[events['player'] == player_name]
     
-    xA_value = 0
-    if (player_events.index + 1 < len(events)).all() and (player_events.index + 2 < len(events)).all():
-        xA_value = events.loc[player_events.index + 1, 'shot_statsbomb_xg'].fillna(0).sum() + \
-                   events.loc[player_events.index + 2, 'shot_statsbomb_xg'].fillna(0).sum()
+    xA_value = (
+        events.loc[np.clip(player_events.index + 1, 0, len(events) - 1), 'shot_statsbomb_xg'].fillna(0).sum() +
+        events.loc[np.clip(player_events.index + 2, 0, len(events) - 1), 'shot_statsbomb_xg'].fillna(0).sum()
+    )
 
 
     return xA_value
