@@ -63,16 +63,15 @@ def set_light_mode():
 
 
 def calculate_xA(events, player_name):
-    xA_value = 0
-    player_shot_assists_indexes = events[events['player'] == player_name].index
+    # Filtra os eventos do jogador e encontra as assistências de chute
+    player_events = events[events['player'] == player_name]
 
-    # Itera sobre os índices de assistências de chute
-    for index in player_shot_assists_indexes:
-        # Verifique se index + 1 e index + 2 estão dentro do range do DataFrame
-        if index + 1 in events.index and index + 2 in events.index:
-            xA_value += events.loc[index + 1:index + 2, 'shot_statsbomb_xg'].fillna(0).sum()
+    # Soma os valores de xG dos eventos subsequentes ao índice de assistências de chute
+    xA_value = events.loc[player_events.index + 1, 'shot_statsbomb_xg'].fillna(0).sum() + \
+               events.loc[player_events.index + 2, 'shot_statsbomb_xg'].fillna(0).sum()
 
     return xA_value
+
 
 def calculate_xT(player_events):
     
