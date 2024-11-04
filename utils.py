@@ -24,8 +24,22 @@ def set_light_mode():
             background-color: #f8f9fa;
             color: #333333;
         }
+        
+        /* Estilo personalizado para bot'ões */
+'.stButton>button {
+    background-color: #e0e0e0; /* Fundo cinza claro */
+    color: #000000; /* Texto preto */
+    border: 2px solid #000000; /* Contorno preto */
+    padding: 10px 20px;
+    border-radius: 5px; /* Bordas levemente arredondadas */
+    font-size: 16px;
+    font-weight: bold;
+}''
 
-
+        /* Estilo para cabeçalhos */
+        h1, h2, h3, h4, h5, h6 {
+            color: #000000; /* Cinza escuro para os cabeçalhos */
+        }
         /* Remove fundo escuro nos containers */
         .css-1adrfps {
             background-color: #ffffff !important;
