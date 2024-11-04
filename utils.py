@@ -106,9 +106,12 @@ def crop_figure(fig, height_crop_percent=0.05,width_crop_percent = 0.275):
 
     return img
 
-def load_and_resize_image(url, final_size=(128, 160), aspect_ratio = 4/5):
-    response = requests.get(url)
-    img = Image.open(BytesIO(response.content))
+def load_and_resize_image(player_name, final_size=(128, 160), aspect_ratio = 4/5):
+
+    file_path = f"images/{player_name}.jpg"
+    
+
+    img = Image.open(file_path)
     
 
     width, height = img.size
