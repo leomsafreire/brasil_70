@@ -1,6 +1,7 @@
 import streamlit as st
 from utils import (
     set_light_mode,
+    calculate_xA
     calculate_xT,
     crop_figure,
     load_and_resize_image,
@@ -31,6 +32,7 @@ def main():
     st.title('Brasil 70')
     st.markdown("<span style='font-size: 18px;'>by Leo M. Sa Freire</span>", unsafe_allow_html=True)
     
+    
 
     players = {
         'Ado': ('Eduardo Roberto Stinghen', 'https://upload.wikimedia.org/wikipedia/commons/8/82/Eduardo_Roberto_Stinghen.jpg'),
@@ -56,13 +58,54 @@ def main():
         'Tostão': ('Eduardo Gonçalves de Andrade', 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Tost%C3%A3o_%28Eduardo_Gon%C3%A7alves_de_Andrade%2C_1970%29.jpg/640px-Tost%C3%A3o_%28Eduardo_Gon%C3%A7alves_de_Andrade%2C_1970%29.jpg'),
         'Zé Maria': ('José Maria Rodrigues Alves', 'https://upload.wikimedia.org/wikipedia/commons/1/14/Z%C3%A9_Maria_1970.png')
     }
+    
+    
+    goalkeepers = {
+        'Félix': ('Félix Miéli Venerando', 32),
+        'Ado': ('Eduardo Roberto Stinghen', 23),
+        'Émerson Leão': ('Emerson Leão', 20),
+        
+        }
+    
+    defenders = {
+        'Carlos Alberto': ('Carlos Alberto Torres', 25),
+        'Brito': ('Hercules Brito Ruas', 30),
+        'Piazza': ('Wilson da Silva Piazza', 26),
+        'Everaldo': ('Everaldo Marques da Silva', 25),
+        'Zé Maria': ('José Maria Rodrigues Alves', 21),
+        'Fontana': ('José de Anchieta Fontana', 29),
+        'Baldocchi': ('José Guilherme Baldocchi', 24),
+        'Joel Camargo': ('Joel Camargo', 23),
+        'Marco Antônio': ('Marco Antônio Feliciano', 19),
+        }
+        
+    midfielders = {
+        'Clodoaldo': ('Clodoaldo Tavares de Santana', 20),
+        'Gérson': ('Gérson de Oliveira Nunes', 29),
+        'Rivellino': ('Roberto Rivelino', 24),
+        'Pelé': ('Édson Arantes do Nascimento', 29),
+        'Paulo Cézar Caju': ('Paulo Cézar Lima', 20),
+        }
+    
+    forwards = {
+        'Jairzinho': ('Jair Ventura Filho', 25),
+        'Tostão': ('Eduardo Gonçalves de Andrade', 23),
+        'Roberto Miranda': ('Roberto Lopes de Miranda', 25),
+        'Edu': ('Jonas Eduardo Américo', 20),
+        'Dadá Maravilha': ('Dario José dos Santos', 24),
+        }
+        
+        
+        
+        
+        
 
 
     if "selected_player" not in st.session_state:
-        # Subtítulo em fonte menor
+        
         st.markdown("<span style='font-size: 24px;'>The 1970 Brazilian national team is often hailed as the greatest World Cup team of all time. With Pelé in his final form, the iconic five-midfield lineup, and the controversial coaching change right before the tournament—everything aligned for Brazil's historic third world title.</span>", unsafe_allow_html=True)
         
-        # Texto principal em parágrafos
+       
         st.markdown("""
         <p style='font-size: 24px;'>
             This project pays tribute to the legendary players behind this achievement. The first page, styled like a sticker album, showcases each of them. By clicking on a player’s name, you can open a data profile with their performance in the 1970 World Cup.
@@ -70,31 +113,109 @@ def main():
         """, unsafe_allow_html=True)
         st.header("Pick a player:")
 
+        
 
-
+        #GOALKEEPERS
+        
+        st.markdown("""
+        <p style='font-size: 24px;'>
+            Goalkeepers
+        </p>
+        """, unsafe_allow_html=True)
+        
+        
         cols = st.columns(5)  
-        for i, (player, (name, image_url)) in enumerate(players.items()):
+        for i, (player, (name, age)) in enumerate(goalkeepers.items()):
             with cols[i % 5]:  
                 if st.button(player):  
                     st.session_state.selected_player = player
                     st.session_state.player_name = name
-                    st.session_state.player_image_url = image_url
+                    st.session_state.player_age = age
                     st.experimental_rerun()
                 player_image = load_and_resize_image(name)  
                 st.image(player_image, use_column_width=True)
 
+        
 
+
+
+        #DEFENDERS
+        
+        
+        st.markdown("""
+        <p style='font-size: 24px;'>
+            Defenders
+        </p>
+        """, unsafe_allow_html=True)
+        
+        
+        cols = st.columns(5)  
+        for i, (player, (name, age)) in enumerate(defenders.items()):
+            with cols[i % 5]:  
+                if st.button(player):  
+                    st.session_state.selected_player = player
+                    st.session_state.player_name = name
+                    st.session_state.player_age = age
+                    st.experimental_rerun()
+                player_image = load_and_resize_image(name)  
+                st.image(player_image, use_column_width=True)
+                
+              
+                
+              
+                
+        #MIDFIELDERS
+                
+        # Texto principal em parágrafos
+        st.markdown("""
+        <p style='font-size: 24px;'>
+            Midfielders
+        </p>
+        """, unsafe_allow_html=True)
+        
+        
+        cols = st.columns(5)  
+        for i, (player, (name, age)) in enumerate(midfielders.items()):
+            with cols[i % 5]:  
+                if st.button(player):  
+                    st.session_state.selected_player = player
+                    st.session_state.player_name = name
+                    st.session_state.player_age = age
+                    st.experimental_rerun()
+                player_image = load_and_resize_image(name)  
+                st.image(player_image, use_column_width=True)
+
+        #FORWARDS
+                
+        # Texto principal em parágrafos
+        st.markdown("""
+        <p style='font-size: 24px;'>
+            Forwards
+        </p>
+        """, unsafe_allow_html=True)
+        
+        
+        cols = st.columns(5)  
+        for i, (player, (name, age)) in enumerate(forwards.items()):
+            with cols[i % 5]:  
+                if st.button(player):  
+                    st.session_state.selected_player = player
+                    st.session_state.player_name = name
+                    st.session_state.player_age = age
+                    st.experimental_rerun()
+                player_image = load_and_resize_image(name)  
+                st.image(player_image, use_column_width=True)
     else:
         
         selected_player = st.session_state.selected_player
         player_name = st.session_state.player_name
-        player_image_url = st.session_state.player_image_url
+        player_age = st.session_state.player_age
         
         
         if st.button("Back to main page"):
             del st.session_state.selected_player
             del st.session_state.player_name
-            del st.session_state.player_image_url
+            del st.session_state.player_age
             st.experimental_rerun()
 
         
@@ -125,6 +246,9 @@ def main():
     
 
         total_xt_pass, total_xt_carries = calculate_xT(player_events)
+        
+        events = get_events_competition(competition_id, season_id)
+        total_xa = calculate_xA(events,player_name)
 
         st.header(f'{selected_player}')
     
@@ -140,12 +264,15 @@ def main():
             with cols[1]:
                 subcols = st.columns(2)
                 with subcols[0]:
+                    st.metric(label="Age", value=int(player_age))
+                    st.metric(label="xG", value=total_xg)
+                    st.metric(label="xA", value=total_xa)
+                    st.metric(label="Pass xT", value=total_xt_pass.round(2))
+                    
+                with subcols[1]:
                     st.metric(label="Matches", value=int(n_matches))
                     st.metric(label="Goals", value=int(total_goals))
                     st.metric(label="Assists", value=int(total_assists))
-                with subcols[1]:
-                    st.metric(label="xG", value=total_xg)
-                    st.metric(label="Pass xT", value=total_xt_pass.round(2))
                     st.metric(label="Carry xT", value=total_xt_carries.round(2))
             
             with cols[2]:
