@@ -1,7 +1,7 @@
 import streamlit as st
 from utils import (
     set_light_mode,
-    calculate_xA
+    calculate_xA,
     calculate_xT,
     crop_figure,
     load_and_resize_image,
