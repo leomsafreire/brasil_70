@@ -17,6 +17,16 @@ from statsbombpy import sb
 
 def main():
     st.set_page_config(layout="wide")  
+    st.markdown(
+    """
+    <style>
+    /* Remove o cabeçalho e o rodapé */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    </style>
+    """,
+    unsafe_allow_html=True
+)
     # set_light_mode()
     st.title('Brasil 70')
     st.markdown("<span style='font-size: 18px;'>by Leo M. Sa Freire</span>", unsafe_allow_html=True)
@@ -26,7 +36,6 @@ def main():
         'Ado': ('Eduardo Roberto Stinghen', 'https://upload.wikimedia.org/wikipedia/commons/8/82/Eduardo_Roberto_Stinghen.jpg'),
         'Baldocchi': ('José Guilherme Baldocchi', 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Baldocchi_%281970%29.jpg/227px-Baldocchi_%281970%29.jpg'),
         'Brito': ('Hercules Brito Ruas', 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/H%C3%A9rcules_de_Brito_Ruas.jpg/330px-H%C3%A9rcules_de_Brito_Ruas.jpg'),
-        'Caju': ('Paulo Cézar Lima', 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Caju_1978.jpg/1200px-Caju_1978.jpg'),
         'Carlos Alberto': ('Carlos Alberto Torres', 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Carlos_Alberto_%281970%29.jpg/220px-Carlos_Alberto_%281970%29.jpg'),
         'Clodoaldo': ('Clodoaldo Tavares de Santana', 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Clodoaldo_1970.jpg/220px-Clodoaldo_1970.jpg'),
         'Dada Maravilha': ('Dario José dos Santos', 'https://upload.wikimedia.org/wikipedia/commons/c/c9/Dad%C3%A1_Maravilha_%281970%29.jpg'),
@@ -39,10 +48,11 @@ def main():
         'Jairzinho': ('Jair Ventura Filho', 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Jairzinho_%28Jair_Ventura_Filho%2C_1970%29.jpg/150px-Jairzinho_%28Jair_Ventura_Filho%2C_1970%29.jpg'),
         'Joel Camargo': ('Joel Camargo', 'https://upload.wikimedia.org/wikipedia/commons/1/1d/Joel_Camargo_%281970%29.jpg'),
         'Marco Antônio': ('Marco Antônio Feliciano', 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Marco_Ant%C3%B4nio_%281974%29.jpg/230px-Marco_Ant%C3%B4nio_%281974%29.jpg'),
+        'Paulo Cézar Caju': ('Paulo Cézar Lima', 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Caju_1978.jpg/1200px-Caju_1978.jpg'),
         'Pelé': ('Édson Arantes do Nascimento', 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Panini_pele_photo_only.jpg/160px-Panini_pele_photo_only.jpg'),
         'Piazza': ('Wilson da Silva Piazza', 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Wilson_Piazza.jpg/220px-Wilson_Piazza.jpg'),
         'Roberto Miranda': ('Roberto Lopes de Miranda', 'https://upload.wikimedia.org/wikipedia/commons/d/d2/Roberto_Miranda_%281970%29%2C_%27Mexico_70%27%2C_Panini_figurina.jpg'),
-        'Roberto Rivelino': ('Roberto Rivelino', 'https://upload.wikimedia.org/wikipedia/commons/d/df/Rivelino_brasil_figurita.jpg'),
+        'Rivellino': ('Roberto Rivelino', 'https://upload.wikimedia.org/wikipedia/commons/d/df/Rivelino_brasil_figurita.jpg'),
         'Tostão': ('Eduardo Gonçalves de Andrade', 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Tost%C3%A3o_%28Eduardo_Gon%C3%A7alves_de_Andrade%2C_1970%29.jpg/640px-Tost%C3%A3o_%28Eduardo_Gon%C3%A7alves_de_Andrade%2C_1970%29.jpg'),
         'Zé Maria': ('José Maria Rodrigues Alves', 'https://upload.wikimedia.org/wikipedia/commons/1/14/Z%C3%A9_Maria_1970.png')
     }
@@ -101,7 +111,8 @@ def main():
             st.write(f"No data for {player_name}")
             return
     
-       
+        matches = player_events['match_id'].unique()
+        n_matches = len(matches)
         passes = player_events[player_events['type'] == 'Pass']
         assists = passes[passes['pass_goal_assist'] == True]
         total_assists = len(assists)
@@ -126,6 +137,7 @@ def main():
                 st.image(player_image)
                 
             with cols[1]:
+                st.metric(label="Matches", value=int(n_matches))
                 st.metric(label="Goals", value=int(total_goals))
                 st.metric(label="Assists", value=int(total_assists))
                 st.metric(label="xG", value=total_xg)
