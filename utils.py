@@ -24,21 +24,21 @@ def set_light_mode():
             color: #333333;
         }
 
-        /* Estilo personalizado para botões */
+        /* Estilo personalizado para botões com borda cinza escura e fundo cinza claro */
         .stButton>button {
-            background-color: #e0e0e0; /* Fundo cinza claro */
+            background-color: #e6e6e6; /* Fundo cinza claro */
             color: #000000; /* Texto preto */
-            border: 2px solid #000000; /* Contorno preto */
+            border: 2px solid #a9a9a9; /* Contorno cinza escuro */
             padding: 10px 20px;
-            border-radius: 5px; /* Bordas levemente arredondadas */
+            border-radius: 8px; /* Bordas levemente arredondadas */
             font-size: 16px;
             font-weight: bold;
         }
 
         /* Efeito de hover para os botões */
         .stButton>button:hover {
-            background-color: #d0d0d0; /* Fundo cinza mais escuro no hover */
-            border-color: #333333;
+            background-color: #d3d3d3; /* Fundo cinza mais escuro no hover */
+            border-color: #8c8c8c; /* Borda cinza escuro no hover */
             color: #000000;
         }
 
@@ -55,6 +55,7 @@ def set_light_mode():
         """,
         unsafe_allow_html=True
     )
+
     
 def calculate_xT(player_events):
     
