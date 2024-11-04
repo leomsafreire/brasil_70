@@ -197,7 +197,7 @@ def get_events_competition(competition_id, season_id):
         events_list.append(events_df)
 
     if events_list:
-        all_events = pd.concat(events_list)
+        all_events = pd.concat(events_list).reset_index()
         return all_events
     else:
         return pd.DataFrame()
