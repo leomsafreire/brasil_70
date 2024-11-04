@@ -20,7 +20,15 @@ def main():
     set_light_mode()
     st.title('Brasil 70')
     st.markdown("<span style='font-size: 18px; color: black;'>by Leo M. Sa Freire</span>", unsafe_allow_html=True)
-
+    # Subtítulo em fonte menor
+    st.markdown("<span style='font-size: 24px;'>The 1970 Brazilian national team is often hailed as the greatest World Cup team of all time. With Pelé in his final form, the iconic five-midfield lineup, and the controversial coaching change right before the tournament—everything aligned for Brazil's historic third world title.</span>", unsafe_allow_html=True)
+    
+    # Texto principal em parágrafos
+    st.markdown("""
+    <p style='font-size: 24px;'>
+        This project pays tribute to the legendary players behind this achievement. The first page, styled like a sticker album, showcases each of them. By clicking on a player’s name, you can open a detailed profile with stats and highlights from their performance in the 1970 World Cup.
+    </p>
+    """, unsafe_allow_html=True)
     
 
     players = {
@@ -50,7 +58,7 @@ def main():
 
 
     if "selected_player" not in st.session_state:
-        st.header("Selecione um jogador:")
+        st.header("Pick a player:")
 
 
         cols = st.columns(5)  
@@ -72,7 +80,7 @@ def main():
         player_image_url = st.session_state.player_image_url
         
         
-        if st.button("Voltar à página inicial"):
+        if st.button("Back to main page"):
             del st.session_state.selected_player
             del st.session_state.player_name
             del st.session_state.player_image_url
@@ -89,7 +97,7 @@ def main():
         player_events = get_player_events_competition(competition_id, season_id, player_name)
     
         if player_events.empty:
-            st.write(f"Nenhum evento encontrado para {player_name} na competição selecionada.")
+            st.write(f"No data for {player_name}")
             return
     
        
@@ -117,18 +125,18 @@ def main():
                 st.image(player_image)
                 
             with cols[1]:
-                st.metric(label="Gols", value=int(total_goals))
-                st.metric(label="Assistências", value=int(total_assists))
+                st.metric(label="Goals", value=int(total_goals))
+                st.metric(label="Assists", value=int(total_assists))
                 st.metric(label="xG", value=total_xg)
                 st.metric(label="Pass xT", value=total_xt_pass.round(2))
                 st.metric(label="Carry xT", value=total_xt_carries.round(2))
             with cols[2]:
-                st.subheader('Recepçoes')
+                st.subheader('Ball Receipts')
                 fig_rec_actions = plot_reception_actions(player_events)
                 cropped_rec_actions = crop_figure(fig_rec_actions)
                 st.image(cropped_rec_actions,  width = 190)
             with cols[3]:
-                st.subheader('Conduções')
+                st.subheader('Carries')
                 fig_carries = plot_carries(player_events)
                 cropped_carries = crop_figure(fig_carries)
                 st.image(cropped_carries, width = 190)
@@ -138,7 +146,7 @@ def main():
                 cropped_passes = crop_figure(fig_passes)
                 st.image(cropped_passes, width = 190 )
             with cols[5]:
-                st.subheader('Finalizações')
+                st.subheader('Shots')
                 fig_possession_losses = plot_shots(player_events)
                 cropped_shots = crop_figure(fig_possession_losses)
                 st.image(cropped_shots,  width = 190)
