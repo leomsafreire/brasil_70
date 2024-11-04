@@ -205,10 +205,9 @@ def get_player_events_competition(events, player_name):
 
     player_events = events[events['player'] == player_name]
 
-    if player_events:
-        return player_events
-    else:
-        return pd.DataFrame()
+    
+    return player_events
+
 
 def plot_passes(events_df, title=''):
     pitch = Pitch()
