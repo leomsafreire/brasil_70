@@ -15,9 +15,18 @@ from utils import (
 )
 from statsbombpy import sb
 
-
+# Initialize session state variables
+if "trigger_reload" not in st.session_state:
+    st.session_state.trigger_reload = False
+if "selected_player" not in st.session_state:
+    st.session_state.selected_player = None
+if "player_name" not in st.session_state:
+    st.session_state.player_name = None
+if "player_age" not in st.session_state:
+    st.session_state.player_age = None
 
 def main():
+    
     st.set_page_config(layout="wide")  
     st.markdown(
     """
@@ -102,7 +111,7 @@ def main():
         
 
 
-    if "selected_player" not in st.session_state:
+    if st.session_state.selected_player is None:
         
         st.markdown("<span style='font-size: 24px;'>The 1970 Brazilian national team is often hailed as the greatest World Cup team of all time. With Pelé in his final form, the iconic five-midfield lineup, and the controversial coaching change right before the tournament—everything aligned for Brazil's historic third world title.</span>", unsafe_allow_html=True)
         
@@ -132,7 +141,6 @@ def main():
                     st.session_state.selected_player = player
                     st.session_state.player_name = name
                     st.session_state.player_age = age
-                    st.experimental_rerun()
                 player_image = load_and_resize_image(name)  
                 st.image(player_image, use_column_width=True)
 
@@ -157,7 +165,6 @@ def main():
                     st.session_state.selected_player = player
                     st.session_state.player_name = name
                     st.session_state.player_age = age
-                    st.experimental_rerun()
                 player_image = load_and_resize_image(name)  
                 st.image(player_image, use_column_width=True)
                 
@@ -182,7 +189,6 @@ def main():
                     st.session_state.selected_player = player
                     st.session_state.player_name = name
                     st.session_state.player_age = age
-                    st.experimental_rerun()
                 player_image = load_and_resize_image(name)  
                 st.image(player_image, use_column_width=True)
 
@@ -203,7 +209,6 @@ def main():
                     st.session_state.selected_player = player
                     st.session_state.player_name = name
                     st.session_state.player_age = age
-                    st.experimental_rerun()
                 player_image = load_and_resize_image(name)  
                 st.image(player_image, use_column_width=True)
     else:
@@ -212,12 +217,11 @@ def main():
         player_name = st.session_state.player_name
         player_age = st.session_state.player_age
         
-        
         if st.button("Back to main page"):
-            del st.session_state.selected_player
-            del st.session_state.player_name
-            del st.session_state.player_age
-            st.experimental_rerun()
+            st.session_state.selected_player = None
+            st.session_state.player_name = None
+            st.session_state.player_age = None
+        
 
         
         competitions = get_competitions()

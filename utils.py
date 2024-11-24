@@ -8,6 +8,35 @@ from io import BytesIO
 import numpy as np
 import streamlit as st
 
+
+def load_and_resize_image_url(image_url, final_size=(128, 160), aspect_ratio=4/5):
+    # Faz o download da imagem a partir do URL
+    response = requests.get(image_url)
+    img = Image.open(BytesIO(response.content))
+
+    # Resto do código permanece o mesmo
+    width, height = img.size
+
+    # Calcula a nova largura e altura mantendo a proporção desejada
+    if width / height > aspect_ratio:
+        new_width = int(height * aspect_ratio)
+        new_height = height
+    else:
+        new_width = width
+        new_height = int(width / aspect_ratio)
+
+    # Calcula as coordenadas para o corte centralizado
+    left = (width - new_width) / 2
+    top = (height - new_height) / 2
+    right = (width + new_width) / 2
+    bottom = (height + new_height) / 2
+
+    # Recorta e redimensiona a imagem
+    img = img.crop((left, top, right, bottom))
+    img = img.resize(final_size, Image.LANCZOS)
+
+    return img
+
 def set_light_mode():
     st.markdown(
         """
