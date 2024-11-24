@@ -14,306 +14,201 @@ from utils import (
     plot_shots
 )
 from statsbombpy import sb
+from enum import Enum
 
 # Initialize session state variables
-if "trigger_reload" not in st.session_state:
-    st.session_state.trigger_reload = False
-if "selected_player" not in st.session_state:
-    st.session_state.selected_player = None
-if "player_name" not in st.session_state:
-    st.session_state.player_name = None
-if "player_age" not in st.session_state:
-    st.session_state.player_age = None
+if "selected_player_data" not in st.session_state:
+    st.session_state.selected_player_data = None
 
 def main():
-    
-    st.set_page_config(layout="wide")  
-    st.markdown(
-    """
+    """Main function to run the Streamlit app."""
+    setup_page()
+    if st.session_state.selected_player_data is None:
+        display_home_page()
+    else:
+        display_player_profile()
+
+def setup_page():
+    """Set up the Streamlit page configuration and styles."""
+    st.set_page_config(layout="wide")
+    st.markdown("""
     <style>
-    /* Remove o cabeçalho e o rodapé */
+    /* Hide the header and footer */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
+    /* General styles */
+    .stContainer {padding: 0em 0em;}
+    p {font-size: 24px;}
+    span {font-size: 24px;}
     </style>
-    """,
-    unsafe_allow_html=True
-)
-    # set_light_mode()
+    """, unsafe_allow_html=True)
     st.title('Brasil 70')
     st.markdown("<span style='font-size: 18px;'>by Leo M. Sa Freire</span>", unsafe_allow_html=True)
+
+def display_home_page():
+    """Display the main page with player selections."""
+    st.markdown("<span style='font-size: 24px;'>The 1970 Brazilian national team is often hailed as the greatest World Cup team of all time. With Pelé in his final form, the iconic five-midfield lineup, and the controversial coaching change right before the tournament—everything aligned for Brazil's historic third world title.</span>", unsafe_allow_html=True)
     
-    
+    st.markdown("""
+    <p style='font-size: 24px;'>
+        This project pays tribute to the legendary players behind this achievement. The first page, styled like a sticker album, showcases each of them. By clicking on a player’s name, you can open a data profile with their performance in the 1970 World Cup.
+    </p>
+    """, unsafe_allow_html=True)
+    st.header("Pick a player:")
 
-    players = {
-        'Ado': ('Eduardo Roberto Stinghen', 'https://upload.wikimedia.org/wikipedia/commons/8/82/Eduardo_Roberto_Stinghen.jpg'),
-        'Baldocchi': ('José Guilherme Baldocchi', 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Baldocchi_%281970%29.jpg/227px-Baldocchi_%281970%29.jpg'),
-        'Brito': ('Hercules Brito Ruas', 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/H%C3%A9rcules_de_Brito_Ruas.jpg/330px-H%C3%A9rcules_de_Brito_Ruas.jpg'),
-        'Carlos Alberto': ('Carlos Alberto Torres', 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Carlos_Alberto_%281970%29.jpg/220px-Carlos_Alberto_%281970%29.jpg'),
-        'Clodoaldo': ('Clodoaldo Tavares de Santana', 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Clodoaldo_1970.jpg/220px-Clodoaldo_1970.jpg'),
-        'Dada Maravilha': ('Dario José dos Santos', 'https://upload.wikimedia.org/wikipedia/commons/c/c9/Dad%C3%A1_Maravilha_%281970%29.jpg'),
-        'Edu': ('Jonas Eduardo Américo', 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Edu_1970.jpg/220px-Edu_1970.jpg'),
-        'Émerson Leão': ('Emerson Leão', 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/%C3%89merson_Le%C3%A3o.jpg/220px-%C3%89merson_Le%C3%A3o.jpg'),
-        'Everaldo': ('Everaldo Marques da Silva', 'https://upload.wikimedia.org/wikipedia/commons/2/20/Everaldo_Marques_da_Silva.jpg'),
-        'Félix': ('Félix Miéli Venerando', 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/F%C3%A9lix_Brasil.jpg/220px-F%C3%A9lix_Brasil.jpg'),
-        'Fontana': ('José de Anchieta Fontana', 'https://upload.wikimedia.org/wikipedia/commons/0/0c/Jos%C3%A9_de_Anchieta_Fontana_%281970%29.jpg'),
-        'Gérson': ('Gérson de Oliveira Nunes', 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/G%C3%A9rson_1970.jpg/1200px-G%C3%A9rson_1970.jpg'),
-        'Jairzinho': ('Jair Ventura Filho', 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Jairzinho_%28Jair_Ventura_Filho%2C_1970%29.jpg/150px-Jairzinho_%28Jair_Ventura_Filho%2C_1970%29.jpg'),
-        'Joel Camargo': ('Joel Camargo', 'https://upload.wikimedia.org/wikipedia/commons/1/1d/Joel_Camargo_%281970%29.jpg'),
-        'Marco Antônio': ('Marco Antônio Feliciano', 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Marco_Ant%C3%B4nio_%281974%29.jpg/230px-Marco_Ant%C3%B4nio_%281974%29.jpg'),
-        'Paulo Cézar Caju': ('Paulo Cézar Lima', 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Caju_1978.jpg/1200px-Caju_1978.jpg'),
-        'Pelé': ('Édson Arantes do Nascimento', 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Panini_pele_photo_only.jpg/160px-Panini_pele_photo_only.jpg'),
-        'Piazza': ('Wilson da Silva Piazza', 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Wilson_Piazza.jpg/220px-Wilson_Piazza.jpg'),
-        'Roberto Miranda': ('Roberto Lopes de Miranda', 'https://upload.wikimedia.org/wikipedia/commons/d/d2/Roberto_Miranda_%281970%29%2C_%27Mexico_70%27%2C_Panini_figurina.jpg'),
-        'Rivellino': ('Roberto Rivelino', 'https://upload.wikimedia.org/wikipedia/commons/d/df/Rivelino_brasil_figurita.jpg'),
-        'Tostão': ('Eduardo Gonçalves de Andrade', 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Tost%C3%A3o_%28Eduardo_Gon%C3%A7alves_de_Andrade%2C_1970%29.jpg/640px-Tost%C3%A3o_%28Eduardo_Gon%C3%A7alves_de_Andrade%2C_1970%29.jpg'),
-        'Zé Maria': ('José Maria Rodrigues Alves', 'https://upload.wikimedia.org/wikipedia/commons/1/14/Z%C3%A9_Maria_1970.png')
-    }
-    
-    
-    goalkeepers = {
-        'Félix': ('Félix Miéli Venerando', 32),
-        'Ado': ('Eduardo Roberto Stinghen', 23),
-        'Émerson Leão': ('Emerson Leão', 20),
-        
-        }
-    
-    defenders = {
-        'Carlos Alberto': ('Carlos Alberto Torres', 25),
-        'Brito': ('Hercules Brito Ruas', 30),
-        'Piazza': ('Wilson da Silva Piazza', 26),
-        'Everaldo': ('Everaldo Marques da Silva', 25),
-        'Zé Maria': ('José Maria Rodrigues Alves', 21),
-        'Fontana': ('José de Anchieta Fontana', 29),
-        'Baldocchi': ('José Guilherme Baldocchi', 24),
-        'Joel Camargo': ('Joel Camargo', 23),
-        'Marco Antônio': ('Marco Antônio Feliciano', 19),
-        }
-        
-    midfielders = {
-        'Clodoaldo': ('Clodoaldo Tavares de Santana', 20),
-        'Gérson': ('Gérson de Oliveira Nunes', 29),
-        'Rivellino': ('Roberto Rivelino', 24),
-        'Pelé': ('Édson Arantes do Nascimento', 29),
-        'Paulo Cézar Caju': ('Paulo Cézar Lima', 20),
-        }
-    
-    forwards = {
-        'Jairzinho': ('Jair Ventura Filho', 25),
-        'Tostão': ('Eduardo Gonçalves de Andrade', 23),
-        'Roberto Miranda': ('Roberto Lopes de Miranda', 25),
-        'Edu': ('Jonas Eduardo Américo', 20),
-        'Dadá Maravilha': ('Dario José dos Santos', 24),
-        }
-        
-        
-        
-        
-        
+    # Display players by position
+    display_players_by_position('Goalkeepers', players_by_position('Goalkeeper'))
+    display_players_by_position('Defenders', players_by_position('Defender'))
+    display_players_by_position('Midfielders', players_by_position('Midfielder'))
+    display_players_by_position('Forwards', players_by_position('Forward'))
 
+def display_players_by_position(position_name, players_list):
+    """Display players of a specific position."""
+    st.markdown(f"<p style='font-size: 24px;'>{position_name}</p>", unsafe_allow_html=True)
+    cols = st.columns(5)
+    for i, player in enumerate(players_list):
+        with cols[i % 5]:
+            if st.button(player['display_name']):
+                st.session_state.selected_player_data = player
+            player_image = get_player_image(player['full_name'])
+            st.image(player_image, use_column_width=True)
 
-    if st.session_state.selected_player is None:
-        
-        st.markdown("<span style='font-size: 24px;'>The 1970 Brazilian national team is often hailed as the greatest World Cup team of all time. With Pelé in his final form, the iconic five-midfield lineup, and the controversial coaching change right before the tournament—everything aligned for Brazil's historic third world title.</span>", unsafe_allow_html=True)
-        
-       
-        st.markdown("""
-        <p style='font-size: 24px;'>
-            This project pays tribute to the legendary players behind this achievement. The first page, styled like a sticker album, showcases each of them. By clicking on a player’s name, you can open a data profile with their performance in the 1970 World Cup.
-        </p>
-        """, unsafe_allow_html=True)
-        st.header("Pick a player:")
+def players_by_position(position):
+    """Get players filtered by position."""
+    return [player for player in players if player['position'] == position]
 
-        
+def display_player_profile():
+    """Display the selected player's profile with statistics and visualizations."""
+    selected_player_data = st.session_state.selected_player_data
+    player_name = selected_player_data['full_name']
+    player_age = selected_player_data['age']
+    display_name = selected_player_data['display_name']
 
-        #GOALKEEPERS
-        
-        st.markdown("""
-        <p style='font-size: 24px;'>
-            Goalkeepers
-        </p>
-        """, unsafe_allow_html=True)
-        
-        
-        cols = st.columns(5)  
-        for i, (player, (name, age)) in enumerate(goalkeepers.items()):
-            with cols[i % 5]:  
-                if st.button(player):  
-                    st.session_state.selected_player = player
-                    st.session_state.player_name = name
-                    st.session_state.player_age = age
-                player_image = load_and_resize_image(name)  
-                st.image(player_image, use_column_width=True)
+    if st.button("Back to main page"):
+        st.session_state.selected_player_data = None
+        return
 
-        
-
-
-
-        #DEFENDERS
-        
-        
-        st.markdown("""
-        <p style='font-size: 24px;'>
-            Defenders
-        </p>
-        """, unsafe_allow_html=True)
-        
-        
-        cols = st.columns(5)  
-        for i, (player, (name, age)) in enumerate(defenders.items()):
-            with cols[i % 5]:  
-                if st.button(player):  
-                    st.session_state.selected_player = player
-                    st.session_state.player_name = name
-                    st.session_state.player_age = age
-                player_image = load_and_resize_image(name)  
-                st.image(player_image, use_column_width=True)
-                
-              
-                
-              
-                
-        #MIDFIELDERS
-                
-        # Texto principal em parágrafos
-        st.markdown("""
-        <p style='font-size: 24px;'>
-            Midfielders
-        </p>
-        """, unsafe_allow_html=True)
-        
-        
-        cols = st.columns(5)  
-        for i, (player, (name, age)) in enumerate(midfielders.items()):
-            with cols[i % 5]:  
-                if st.button(player):  
-                    st.session_state.selected_player = player
-                    st.session_state.player_name = name
-                    st.session_state.player_age = age
-                player_image = load_and_resize_image(name)  
-                st.image(player_image, use_column_width=True)
-
-        #FORWARDS
-                
-        # Texto principal em parágrafos
-        st.markdown("""
-        <p style='font-size: 24px;'>
-            Forwards
-        </p>
-        """, unsafe_allow_html=True)
-        
-        
-        cols = st.columns(5)  
-        for i, (player, (name, age)) in enumerate(forwards.items()):
-            with cols[i % 5]:  
-                if st.button(player):  
-                    st.session_state.selected_player = player
-                    st.session_state.player_name = name
-                    st.session_state.player_age = age
-                player_image = load_and_resize_image(name)  
-                st.image(player_image, use_column_width=True)
-    else:
-        
-        selected_player = st.session_state.selected_player
-        player_name = st.session_state.player_name
-        player_age = st.session_state.player_age
-        
-        if st.button("Back to main page"):
-            st.session_state.selected_player = None
-            st.session_state.player_name = None
-            st.session_state.player_age = None
-        
-
-        
-        competitions = get_competitions()
+    with st.spinner('Loading player data...'):
+        competitions = get_competitions_cached()
         world_cup_competitions = competitions[competitions['competition_name'] == 'FIFA World Cup']
-        season_data = world_cup_competitions[world_cup_competitions['season_name'] == '1970'].iloc[0]
-        competition_id = season_data['competition_id']
-        season_id = season_data['season_id']
-    
-        events = get_events_competition(competition_id, season_id)
-        player_events = get_player_events_competition(events, player_name)
-    
-        if player_events.empty:
-            st.write(f"No data for {player_name}")
+        season_df = world_cup_competitions[world_cup_competitions['season_name'] == '1970']
+        if not season_df.empty:
+            season_data = season_df.iloc[0]
+            competition_id = season_data['competition_id']
+            season_id = season_data['season_id']
+        else:
+            st.error("1970 World Cup data not found.")
             return
-    
-        matches = player_events['match_id'].unique()
-        n_matches = len(matches)
-        passes = player_events[player_events['type'] == 'Pass']
-        assists = passes[passes['pass_goal_assist'] == True]
-        total_assists = len(assists)
 
-    
-        shots = player_events[player_events['type'] == 'Shot']
-        goals = shots[shots['shot_outcome'] == 'Goal']
-        total_goals = len(goals)
-        total_xg = shots['shot_statsbomb_xg'].sum().round(2)
-    
+        events = get_events_competition_cached(competition_id, season_id)
+        player_events = get_player_events_competition(events, player_name)
 
-        total_xt_pass, total_xt_carries = calculate_xT(player_events)
-        
+        if player_events.empty:
+            st.warning(f"No event data available for {player_name} in the 1970 World Cup.")
+            return
 
-        total_xa = calculate_xA(events,player_name).round(2)
+    # Calculate statistics
+    matches = player_events['match_id'].unique()
+    n_matches = len(matches)
+    passes = player_events[player_events['type'] == 'Pass']
+    assists = passes[passes['pass_goal_assist'] == True]
+    total_assists = len(assists)
+    shots = player_events[player_events['type'] == 'Shot']
+    goals = shots[shots['shot_outcome'] == 'Goal']
+    total_goals = len(goals)
+    total_xg = shots['shot_statsbomb_xg'].sum().round(2)
+    total_xt_pass, total_xt_carries = calculate_xT(player_events)
+    total_xa = calculate_xA(events, player_name).round(2)
 
-        st.header(f'{selected_player}')
-    
-        stats_container = st.container()
-        with stats_container:
-            cols = st.columns(6)
-        
-            with cols[0]:
-                player_image = load_and_resize_image(player_name, final_size=(300, 500), aspect_ratio=3/5)
-                st.image(player_image)
-            
-            # Dividindo a coluna 1 em duas subcolunas
-            with cols[1]:
-                subcols = st.columns(2)
-                with subcols[0]:
-                    st.metric(label="Age", value=int(player_age))
-                    st.metric(label="xG", value=total_xg)
-                    st.metric(label="xA", value=total_xa)
-                    st.metric(label="Pass xT", value=total_xt_pass.round(2))
-                    
-                with subcols[1]:
-                    st.metric(label="Matches", value=int(n_matches))
-                    st.metric(label="Goals", value=int(total_goals))
-                    st.metric(label="Assists", value=int(total_assists))
-                    st.metric(label="Carry xT", value=total_xt_carries.round(2))
-            
-            with cols[2]:
-                st.subheader('Ball Receipts')
-                fig_rec_actions = plot_reception_actions(player_events)
-                cropped_rec_actions = crop_figure(fig_rec_actions)
-                st.image(cropped_rec_actions, width=190)
-            
-            with cols[3]:
-                st.subheader('Carries')
-                fig_carries = plot_carries(player_events)
-                cropped_carries = crop_figure(fig_carries)
-                st.image(cropped_carries, width=190)
-            
-            with cols[4]:
-                st.subheader('Passes')
-                fig_passes = plot_passes(player_events)
-                cropped_passes = crop_figure(fig_passes)
-                st.image(cropped_passes, width=190)
-            
-            with cols[5]:
-                st.subheader('Shots')
-                fig_possession_losses = plot_shots(player_events)
-                cropped_shots = crop_figure(fig_possession_losses)
-                st.image(cropped_shots, width=190)
+    st.header(f'{display_name}')
 
-    
- 
-       
-        st.markdown("""
-            <style>
-            .stContainer {
-                padding: 0em 0em;
-            }
-            </style>
-            """, unsafe_allow_html=True)
+    stats_container = st.container()
+    with stats_container:
+        cols = st.columns(6)
+
+        with cols[0]:
+            player_image = get_player_image(player_name)
+            st.image(player_image)
+
+        with cols[1]:
+            subcols = st.columns(2)
+            with subcols[0]:
+                st.metric(label="Age", value=player_age)
+                st.metric(label="xG", value=total_xg)
+                st.metric(label="xA", value=total_xa)
+                st.metric(label="Pass xT", value=total_xt_pass.round(2))
+            with subcols[1]:
+                st.metric(label="Matches", value=n_matches)
+                st.metric(label="Goals", value=total_goals)
+                st.metric(label="Assists", value=total_assists)
+                st.metric(label="Carry xT", value=total_xt_carries.round(2))
+
+        # Plotting functions
+        with cols[2]:
+            st.subheader('Ball Receipts')
+            fig_rec_actions = plot_reception_actions(player_events)
+            st.pyplot(fig_rec_actions)
+
+        with cols[3]:
+            st.subheader('Carries')
+            fig_carries = plot_carries(player_events)
+            st.pyplot(fig_carries)
+
+        with cols[4]:
+            st.subheader('Passes')
+            fig_passes = plot_passes(player_events)
+            st.pyplot(fig_passes)
+
+        with cols[5]:
+            st.subheader('Shots')
+            fig_shots = plot_shots(player_events)
+            st.pyplot(fig_shots)
+
+# Caching functions to improve performance
+@st.cache_data
+def get_competitions_cached():
+    """Cache the competitions data."""
+    return get_competitions()
+
+@st.cache_data
+def get_events_competition_cached(competition_id, season_id):
+    """Cache the events data for a competition and season."""
+    return get_events_competition(competition_id, season_id)
+
+@st.cache_data
+def get_player_image(name):
+    """Cache the player image loading and resizing."""
+    try:
+        return load_and_resize_image(name, final_size=(300, 500), aspect_ratio=3/5)
+    except Exception:
+        st.warning(f"Image for {name} could not be loaded.")
+        return None  # Or return a default image
+
+# Player data
+players = [
+    {'display_name': 'Ado', 'full_name': 'Eduardo Roberto Stinghen', 'age': 23, 'position': 'Goalkeeper'},
+    {'display_name': 'Émerson Leão', 'full_name': 'Emerson Leão', 'age': 20, 'position': 'Goalkeeper'},
+    {'display_name': 'Félix', 'full_name': 'Félix Miéli Venerando', 'age': 32, 'position': 'Goalkeeper'},
+    {'display_name': 'Carlos Alberto', 'full_name': 'Carlos Alberto Torres', 'age': 25, 'position': 'Defender'},
+    {'display_name': 'Brito', 'full_name': 'Hercules Brito Ruas', 'age': 30, 'position': 'Defender'},
+    {'display_name': 'Piazza', 'full_name': 'Wilson da Silva Piazza', 'age': 26, 'position': 'Defender'},
+    {'display_name': 'Everaldo', 'full_name': 'Everaldo Marques da Silva', 'age': 25, 'position': 'Defender'},
+    {'display_name': 'Zé Maria', 'full_name': 'José Maria Rodrigues Alves', 'age': 21, 'position': 'Defender'},
+    {'display_name': 'Fontana', 'full_name': 'José de Anchieta Fontana', 'age': 29, 'position': 'Defender'},
+    {'display_name': 'Baldocchi', 'full_name': 'José Guilherme Baldocchi', 'age': 24, 'position': 'Defender'},
+    {'display_name': 'Joel Camargo', 'full_name': 'Joel Camargo', 'age': 23, 'position': 'Defender'},
+    {'display_name': 'Marco Antônio', 'full_name': 'Marco Antônio Feliciano', 'age': 19, 'position': 'Defender'},
+    {'display_name': 'Clodoaldo', 'full_name': 'Clodoaldo Tavares de Santana', 'age': 20, 'position': 'Midfielder'},
+    {'display_name': 'Gérson', 'full_name': 'Gérson de Oliveira Nunes', 'age': 29, 'position': 'Midfielder'},
+    {'display_name': 'Rivellino', 'full_name': 'Roberto Rivelino', 'age': 24, 'position': 'Midfielder'},
+    {'display_name': 'Pelé', 'full_name': 'Édson Arantes do Nascimento', 'age': 29, 'position': 'Midfielder'},
+    {'display_name': 'Paulo Cézar Caju', 'full_name': 'Paulo Cézar Lima', 'age': 20, 'position': 'Midfielder'},
+    {'display_name': 'Jairzinho', 'full_name': 'Jair Ventura Filho', 'age': 25, 'position': 'Forward'},
+    {'display_name': 'Tostão', 'full_name': 'Eduardo Gonçalves de Andrade', 'age': 23, 'position': 'Forward'},
+    {'display_name': 'Roberto Miranda', 'full_name': 'Roberto Lopes de Miranda', 'age': 25, 'position': 'Forward'},
+    {'display_name': 'Edu', 'full_name': 'Jonas Eduardo Américo', 'age': 20, 'position': 'Forward'},
+    {'display_name': 'Dadá Maravilha', 'full_name': 'Dario José dos Santos', 'age': 24, 'position': 'Forward'},
+]
 
 if __name__ == '__main__':
     main()
