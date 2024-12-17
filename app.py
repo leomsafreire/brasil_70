@@ -15,6 +15,11 @@ from utils import (
 )
 from statsbombpy import sb
 from enum import Enum
+import warnings
+
+
+warnings.filterwarnings("ignore", message="The use_column_width parameter has been deprecated")
+
 
 # Initialize session state variables
 if "selected_player_data" not in st.session_state:
