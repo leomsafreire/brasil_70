@@ -91,7 +91,7 @@ def display_player_profile():
 
     if st.button("Back to main page"):
         st.session_state.selected_player_data = None
-        return
+        st.experimental_rerun()
 
     with st.spinner('Loading player data...'):
         competitions = get_competitions_cached()
