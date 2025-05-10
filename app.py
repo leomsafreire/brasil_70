@@ -1,4 +1,9 @@
 import streamlit as st
+
+# Set page configuration at the top of the script
+st.set_page_config(layout="wide")
+
+# Import necessary modules and functions
 from utils import (
     set_light_mode,
     calculate_xA,
@@ -11,11 +16,20 @@ from utils import (
     plot_passes,
     plot_carries,
     plot_reception_actions,
-    plot_shots
+    plot_shots,
+    get_matches,
+    calculate_possession,
+    calculate_field_tilt,
+    calculate_opp_passes_per_def_action,
+    plot_xg_race,
+    plot_xt_flow,
+    plot_pass_networks
 )
 from statsbombpy import sb
 from enum import Enum
 import warnings
+import matplotlib.pyplot as plt
+from mplsoccer import Pitch
 
 
 warnings.filterwarnings("ignore", message="The use_column_width parameter has been deprecated")
@@ -25,17 +39,22 @@ warnings.filterwarnings("ignore", message="The use_column_width parameter has be
 if "selected_player_data" not in st.session_state:
     st.session_state.selected_player_data = None
 
+# Use sidebar for navigation with fixed options
+page = st.sidebar.radio("Navigation", ["Player Profile", "Collective Analysis"])
+
 def main():
     """Main function to run the Streamlit app."""
     setup_page()
-    if st.session_state.selected_player_data is None:
-        display_home_page()
-    else:
-        display_player_profile()
+    if page == "Player Profile":
+        if st.session_state.selected_player_data is None:
+            display_home_page()
+        else:
+            display_player_profile()
+    elif page == "Collective Analysis":
+        display_collective_analysis()
 
 def setup_page():
     """Set up the Streamlit page configuration and styles."""
-    st.set_page_config(layout="wide")
     st.markdown("""
     <style>
     /* Hide the header and footer */
@@ -76,7 +95,7 @@ def display_players_by_position(position_name, players_list):
             if st.button(player['display_name']):
                 st.session_state.selected_player_data = player
             player_image = get_player_image(player['full_name'])
-            st.image(player_image, use_container_width=True)
+            st.image(player_image)
 
 def players_by_position(position):
     """Get players filtered by position."""
@@ -214,6 +233,109 @@ players = [
     {'display_name': 'Edu', 'full_name': 'Jonas Eduardo Américo', 'age': 20, 'position': 'Forward'},
     {'display_name': 'Dadá Maravilha', 'full_name': 'Dario José dos Santos', 'age': 24, 'position': 'Forward'},
 ]
+
+# New function to display collective analysis page
+def display_collective_analysis():
+    """Display the collective analysis page with match selection and statistics."""
+    st.header("Collective Analysis")
+    competitions = get_competitions_cached()
+    world_cup_competitions = competitions[competitions['competition_name'] == 'FIFA World Cup']
+    season_df = world_cup_competitions[world_cup_competitions['season_name'] == '1970']
+    if not season_df.empty:
+        season_data = season_df.iloc[0]
+        competition_id = season_data['competition_id']
+        season_id = season_data['season_id']
+        matches = get_matches_cached(competition_id, season_id)
+
+        match_names = matches['match_id'].astype(str) + ": " + matches['home_team'] + " vs " + matches['away_team']
+        selected_match = st.selectbox("Select a match", match_names)
+        match_id = matches[matches['match_id'].astype(str) + ": " + matches['home_team'] + " vs " + matches['away_team'] == selected_match]['match_id'].values[0]
+        events = get_events_competition_cached(competition_id, season_id)
+        match_events = events[events['match_id'] == match_id]
+
+        # Determine home and away teams
+        home_team = matches[matches['match_id'] == match_id]['home_team'].values[0]
+        away_team = matches[matches['match_id'] == match_id]['away_team'].values[0]
+        home_score = matches[matches['match_id'] == match_id]['home_score'].values[0]
+        away_score = matches[matches['match_id'] == match_id]['away_score'].values[0]
+
+        # Ensure Brazil is always on the left
+        if home_team == 'Brazil':
+            brazil_team, brazil_score, opponent_team, opponent_score = home_team, home_score, away_team, away_score
+        else:
+            brazil_team, brazil_score, opponent_team, opponent_score = away_team, away_score, home_team, home_score
+
+        st.subheader(f"{brazil_team} {brazil_score} x {opponent_score} {opponent_team}")
+
+        # Calculate and display match statistics
+        st.write("### Match Statistics")
+        brazil_events = match_events[match_events['team'] == brazil_team]
+        opponent_events = match_events[match_events['team'] == opponent_team]
+
+        brazil_xg = brazil_events[brazil_events['type'] == 'Shot']['shot_statsbomb_xg'].sum().round(2)
+        opponent_xg = opponent_events[opponent_events['type'] == 'Shot']['shot_statsbomb_xg'].sum().round(2)
+
+        brazil_xt_pass, brazil_xt_carries = calculate_xT(brazil_events)
+        opponent_xt_pass, opponent_xt_carries = calculate_xT(opponent_events)
+
+        brazil_possession, opponent_possession = calculate_possession(match_events, brazil_team, opponent_team)
+        brazil_field_tilt, opponent_field_tilt = calculate_field_tilt(match_events, brazil_team, opponent_team)
+        brazil_ppda, opponent_ppda = calculate_opp_passes_per_def_action(match_events, brazil_team, opponent_team)
+
+        # Display statistics and plots in the desired layout
+        cols = st.columns(4)
+
+        with cols[0]:
+            st.metric(label="Brazil xG", value=brazil_xg)
+            st.metric(label="Brazil Pass xT", value=brazil_xt_pass.round(2))
+            st.metric(label="Brazil Carry xT", value=brazil_xt_carries.round(2))
+            st.metric(label="Brazil Possession %", value=brazil_possession)
+            st.metric(label="Brazil Field Tilt %", value=brazil_field_tilt)
+            st.metric(label="Brazil Opp. Passes per Def. Action", value=brazil_ppda)
+
+        with cols[1]:
+            st.subheader('Brazil Visualizations')
+            st.subheader('xG Race')
+            fig_xg_race = plot_xg_race(brazil_events, brazil_team, opponent_team)
+            st.pyplot(fig_xg_race)
+
+            st.subheader('xT Flow')
+            fig_xt_flow = plot_xt_flow(brazil_events, brazil_team, opponent_team)
+            st.pyplot(fig_xt_flow)
+
+            st.subheader('Pass Networks')
+            fig_pass_networks = plot_pass_networks(brazil_events)
+            st.pyplot(fig_pass_networks)
+
+        with cols[2]:
+            st.subheader('Opponent Visualizations')
+            st.subheader('xG Race')
+            fig_xg_race_opponent = plot_xg_race(opponent_events, opponent_team, brazil_team)
+            st.pyplot(fig_xg_race_opponent)
+
+            st.subheader('xT Flow')
+            fig_xt_flow_opponent = plot_xt_flow(opponent_events, opponent_team, brazil_team)
+            st.pyplot(fig_xt_flow_opponent)
+
+            st.subheader('Pass Networks')
+            fig_pass_networks_opponent = plot_pass_networks(opponent_events)
+            st.pyplot(fig_pass_networks_opponent)
+
+        with cols[3]:
+            st.metric(label="Opponent xG", value=opponent_xg)
+            st.metric(label="Opponent Pass xT", value=opponent_xt_pass.round(2))
+            st.metric(label="Opponent Carry xT", value=opponent_xt_carries.round(2))
+            st.metric(label="Opponent Possession %", value=opponent_possession)
+            st.metric(label="Opponent Field Tilt %", value=opponent_field_tilt)
+            st.metric(label="Opponent Opp. Passes per Def. Action", value=opponent_ppda)
+    else:
+        st.error("1970 World Cup data not found.")
+
+# Caching function for matches
+@st.cache_data
+def get_matches_cached(competition_id, season_id):
+    """Cache the matches data for a competition and season."""
+    return get_matches(competition_id, season_id)
 
 if __name__ == '__main__':
     main()

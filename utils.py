@@ -7,6 +7,7 @@ import requests
 from io import BytesIO
 import numpy as np
 import streamlit as st
+import matplotlib.pyplot as plt
 
 
 def load_and_resize_image_url(image_url, final_size=(128, 160), aspect_ratio=4/5):
@@ -363,4 +364,77 @@ def plot_shots(events_df, title=''):
     ax.set_title(title)
 
 
+    return fig
+
+# Calculation functions
+
+def calculate_possession(events, home_team, away_team):
+    possession_events = events[events['type'].isin(['Pass', 'Carry'])]
+    total_possession = len(possession_events)
+    home_possession = len(possession_events[possession_events['team'] == home_team])
+    away_possession = len(possession_events[possession_events['team'] == away_team])
+    home_possession_pct = (home_possession / total_possession) * 100
+    away_possession_pct = (away_possession / total_possession) * 100
+    return home_possession_pct, away_possession_pct
+
+
+def calculate_field_tilt(events, home_team, away_team):
+    final_third_passes = events[(events['type'] == 'Pass') & (events['location'].apply(lambda loc: isinstance(loc, (list, tuple)) and loc[0] > 80))]
+    home_final_third_passes = len(final_third_passes[final_third_passes['team'] == home_team])
+    away_final_third_passes = len(final_third_passes[final_third_passes['team'] == away_team])
+    total_final_third_passes = home_final_third_passes + away_final_third_passes
+    home_field_tilt = (home_final_third_passes / total_final_third_passes) * 100
+    away_field_tilt = (away_final_third_passes / total_final_third_passes) * 100
+    return home_field_tilt, away_field_tilt
+
+
+def calculate_opp_passes_per_def_action(events, home_team, away_team):
+    defensive_actions = events[events['type'].isin(['Tackle', 'Interception', 'Foul Won'])]
+    passes = events[events['type'] == 'Pass']
+    home_ppda = len(passes[passes['team'] == away_team]) / len(defensive_actions[defensive_actions['team'] == home_team])
+    away_ppda = len(passes[passes['team'] == home_team]) / len(defensive_actions[defensive_actions['team'] == away_team])
+    return home_ppda, away_ppda
+
+# Plotting functions
+
+def plot_xg_race(events, home_team, away_team):
+    fig, ax = plt.subplots()
+    home_shots = events[(events['type'] == 'Shot') & (events['team'] == home_team)]
+    away_shots = events[(events['type'] == 'Shot') & (events['team'] == away_team)]
+    home_xg_cumsum = home_shots['shot_statsbomb_xg'].cumsum()
+    away_xg_cumsum = away_shots['shot_statsbomb_xg'].cumsum()
+    ax.plot(home_shots['minute'], home_xg_cumsum, label=f'{home_team} xG', color='blue')
+    ax.plot(away_shots['minute'], away_xg_cumsum, label=f'{away_team} xG', color='red')
+    ax.set_title('xG Race')
+    ax.set_xlabel('Minute')
+    ax.set_ylabel('Cumulative xG')
+    ax.legend()
+    return fig
+
+
+def plot_xt_flow(events, home_team, away_team):
+    fig, ax = plt.subplots()
+    home_events = events[events['team'] == home_team]
+    away_events = events[events['team'] == away_team]
+    home_xt = home_events['xT_delta'].cumsum()
+    away_xt = away_events['xT_delta'].cumsum()
+    ax.plot(home_events['minute'], home_xt, label=f'{home_team} xT', color='blue')
+    ax.plot(away_events['minute'], away_xt, label=f'{away_team} xT', color='red')
+    ax.set_title('xT Flow')
+    ax.set_xlabel('Minute')
+    ax.set_ylabel('Cumulative xT')
+    ax.legend()
+    return fig
+
+
+def plot_pass_networks(events):
+    fig, ax = plt.subplots()
+    pitch = Pitch()
+    pitch.draw(ax=ax)
+    passes = events[events['type'] == 'Pass']
+    for _, pass_event in passes.iterrows():
+        start_x, start_y = pass_event['location']
+        end_x, end_y = pass_event['pass_end_location']
+        pitch.arrows(start_x, start_y, end_x, end_y, ax=ax, color='black', alpha=0.3)
+    ax.set_title('Pass Networks')
     return fig
