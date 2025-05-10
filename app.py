@@ -56,7 +56,7 @@ def display_home_page():
     
     st.markdown("""
     <p style='font-size: 24px;'>
-        This project pays tribute to the legendary players behind this achievement. The first page, styled like a sticker album, showcases each of them. By clicking on a player’s name, you can open a data profile with their performance in the 1970 World Cup.
+        This project pays tribute to the legendary players behind this achievement. The first page, styled like a sticker album, showcases each of them. By clicking on a player's name, you can open a data profile with their performance in the 1970 World Cup.
     </p>
     """, unsafe_allow_html=True)
     st.header("Pick a player:")
@@ -76,7 +76,7 @@ def display_players_by_position(position_name, players_list):
             if st.button(player['display_name']):
                 st.session_state.selected_player_data = player
             player_image = get_player_image(player['full_name'])
-            st.image(player_image, use_column_width=True)
+            st.image(player_image, use_container_width=True)
 
 def players_by_position(position):
     """Get players filtered by position."""

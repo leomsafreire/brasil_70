@@ -118,7 +118,7 @@ def main():
        
         st.markdown("""
         <p style='font-size: 24px;'>
-            This project pays tribute to the legendary players behind this achievement. The first page, styled like a sticker album, showcases each of them. By clicking on a player’s name, you can open a data profile with their performance in the 1970 World Cup.
+            This project pays tribute to the legendary players behind this achievement. The first page, styled like a sticker album, showcases each of them. By clicking on a player's name, you can open a data profile with their performance in the 1970 World Cup.
         </p>
         """, unsafe_allow_html=True)
         st.header("Pick a player:")
@@ -142,7 +142,7 @@ def main():
                     st.session_state.player_name = name
                     st.session_state.player_age = age
                 player_image = load_and_resize_image(name)  
-                st.image(player_image, use_column_width=True)
+                st.image(player_image, use_container_width=True)
 
         
 
@@ -166,7 +166,7 @@ def main():
                     st.session_state.player_name = name
                     st.session_state.player_age = age
                 player_image = load_and_resize_image(name)  
-                st.image(player_image, use_column_width=True)
+                st.image(player_image, use_container_width=True)
                 
               
                 
@@ -190,7 +190,7 @@ def main():
                     st.session_state.player_name = name
                     st.session_state.player_age = age
                 player_image = load_and_resize_image(name)  
-                st.image(player_image, use_column_width=True)
+                st.image(player_image, use_container_width=True)
 
         #FORWARDS
                 
@@ -210,7 +210,7 @@ def main():
                     st.session_state.player_name = name
                     st.session_state.player_age = age
                 player_image = load_and_resize_image(name)  
-                st.image(player_image, use_column_width=True)
+                st.image(player_image, use_container_width=True)
     else:
         
         selected_player = st.session_state.selected_player
@@ -263,7 +263,7 @@ def main():
         
             with cols[0]:
                 player_image = load_and_resize_image(player_name, final_size=(300, 500), aspect_ratio=3/5)
-                st.image(player_image)
+                st.image(player_image, use_container_width=True)
             
             # Dividindo a coluna 1 em duas subcolunas
             with cols[1]:
